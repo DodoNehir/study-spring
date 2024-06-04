@@ -1,7 +1,6 @@
 package com.example.jdbcpractice.config;
 
 import com.example.jdbcpractice.JdbcpracticeApplication;
-import lombok.var;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
