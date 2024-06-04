@@ -1,6 +1,7 @@
 package com.example.jdbcpractice.controller;
 
 import com.example.jdbcpractice.entity.Test;
+import com.example.jdbcpractice.exception.SampleNotValidException;
 import com.example.jdbcpractice.service.TestService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class TestController {
         myValidator.validate(test, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            throw new RuntimeException("Validation error");
+            throw new SampleNotValidException("sample id not valid exception");
         }
         return testService.test(test);
     }
