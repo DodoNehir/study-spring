@@ -1,11 +1,23 @@
 package com.example.jdbcpractice.entity;
 
-public class Test {
-    private final String description;
-    private final Integer sampleId;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
 
-    public Test(String description, Integer sampleId) {
-        this.description = description;
-        this.sampleId = sampleId;
-    }
+@Getter
+@Setter
+public class Test {
+    @NotNull
+    private String description1;
+
+    @NotEmpty
+    private String description2;
+
+    @NotBlank
+    private String description3;
+
+    @Min(10)
+    @Max(50)
+    private Integer sampleId;
+
 }
