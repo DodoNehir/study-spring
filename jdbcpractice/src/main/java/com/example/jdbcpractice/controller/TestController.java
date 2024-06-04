@@ -30,7 +30,7 @@ public class TestController {
     }
 
     @PostMapping("/api/v3/test/{testId}")
-    public String postTest(
+    public MyResponse<String> postTest(
             @PathVariable Integer testId,
             @RequestParam String name,
             @RequestBody Test test,
@@ -41,7 +41,8 @@ public class TestController {
         if (bindingResult.hasErrors()) {
             throw new SampleNotValidException("sample id not valid exception");
         }
-        return testService.test(test);
+//        return testService.test(test);
+        return MyResponse.success(testService.test(test));
     }
 
     @GetMapping("/api/v4/test/{testId}")

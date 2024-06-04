@@ -1,5 +1,6 @@
 package com.example.jdbcpractice.exception;
 
+import com.example.jdbcpractice.controller.MyResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -7,12 +8,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionAdvice {
 
     @ExceptionHandler(value = RuntimeException.class)
-    public String handleRuntimeException(RuntimeException re){
-        return re.getMessage();
+    public MyResponse<String> handleRuntimeException(RuntimeException re){
+        return MyResponse.fail(re.getMessage());
     }
 
     @ExceptionHandler(value = SampleNotValidException.class)
-    public String handleSampleNotValidException(SampleNotValidException e){
-        return e.getMessage();
+    public MyResponse<String> handleSampleNotValidException(SampleNotValidException e){
+        return MyResponse.fail(e.getMessage());
     }
 }
