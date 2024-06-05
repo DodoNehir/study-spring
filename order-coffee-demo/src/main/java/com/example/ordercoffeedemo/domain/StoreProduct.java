@@ -12,10 +12,10 @@ public class StoreProduct {
     private int storeProductId;
 
     @Column
-    private String storeId;
+    private int storeId;
 
     @Column
-    private String productId;
+    private int productId;
 
     @Column
     private int stockQuantity;
