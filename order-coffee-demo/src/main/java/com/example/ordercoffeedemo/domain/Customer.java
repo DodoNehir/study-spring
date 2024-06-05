@@ -32,8 +32,8 @@ public class Customer {
     public static Customer newCustomer(CreateCustomer createCustomer) {
         return new Customer(
                 createCustomer.getName(),
-                createCustomer.getAddress(),
-                createCustomer.getPhoneNumber()
+                createCustomer.getPhoneNumber(),
+                createCustomer.getAddress()
         );
     }
 }
