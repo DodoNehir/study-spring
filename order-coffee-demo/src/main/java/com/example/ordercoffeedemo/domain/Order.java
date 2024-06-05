@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-@Table(name="orders")
+@Table(name = "orders")
 public class Order {
     @Id
     private int orderId;

@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
-@Table(name="order_items")
+@Table(name = "order_items")
 public class OrderItem {
     @Id
     private int orderItemId;
