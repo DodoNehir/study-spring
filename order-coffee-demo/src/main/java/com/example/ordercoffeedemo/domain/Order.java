@@ -20,14 +20,14 @@ public class Order {
     private int customerId;
 
     @Column
-    private Timestamp orderAt;
+    private Timestamp orderedAt;
 
     @MappedCollection(idColumn = "order_id", keyColumn = "order_item_id")
     private Set<OrderItem> orderItems = new HashSet<>();
 
     public Order(int customerId, Set<OrderItem> orderItems) {
         this.customerId = customerId;
-        this.orderAt = Timestamp.valueOf(LocalDateTime.now());
+        this.orderedAt = Timestamp.valueOf(LocalDateTime.now());
         this.orderItems = orderItems;
     }
 
