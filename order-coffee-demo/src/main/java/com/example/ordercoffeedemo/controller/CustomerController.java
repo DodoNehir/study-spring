@@ -1,7 +1,6 @@
 package com.example.ordercoffeedemo.controller;
 
 import com.example.ordercoffeedemo.domain.CreateCustomer;
-import com.example.ordercoffeedemo.domain.Customer;
 import com.example.ordercoffeedemo.domain.CustomerDto;
 import com.example.ordercoffeedemo.service.CustomerService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,18 +16,29 @@ public class CustomerController {
     }
 
     @PostMapping("/api/v1/customers")
-    public CustomerDto createNewCustomer(
+    public Response<CustomerDto> createNewCustomer(
             @RequestParam String name,
             @RequestParam String phoneNumber,
             @RequestParam String address
     ) {
-        return customerService.newCustomer(
+
+
+        return Response.success(customerService.newCustomer(
                 CreateCustomer.builder()
                         .name(name)
                         .phoneNumber(phoneNumber)
                         .address(address)
                         .build()
-        );
+        ));
+
+//        return customerService.newCustomer(
+//                CreateCustomer.builder()
+//                        .name(name)
+//                        .phoneNumber(phoneNumber)
+//                        .address(address)
+//                        .build()
+//        );
+
 //        return Customer.newCustomer(
 //                CreateCustomer.builder()
 //                        .name(name)
