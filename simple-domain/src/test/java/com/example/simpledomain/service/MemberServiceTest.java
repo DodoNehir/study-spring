@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MemberServiceTest {
 
-    MemberService memberService = new MemberService();
+    MemberService memberService;
 
     @AfterEach
     void 데이터비우기() {

@@ -1,9 +1,11 @@
 package com.example.simpledomain.repository;
 
 import com.example.simpledomain.domain.Member;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+@Repository
 public class MemoryMemberRepository implements MemberRepository {
 
     // 메모리니까 저장을 어딘가 하자. 여기선 Map
