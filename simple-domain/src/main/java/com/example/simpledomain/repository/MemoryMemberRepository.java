@@ -50,4 +50,8 @@ public class MemoryMemberRepository implements MemberRespository{
 //        return store.values().stream().toList();
         return new ArrayList<>(store.values());
     }
+
+    public void clearStore() {
+        store.clear();
+    }
 }
