@@ -4,7 +4,7 @@ import com.example.simpledomain.domain.Member;
 
 import java.util.*;
 
-public class MemoryMemberRepository implements MemberRespository{
+public class MemoryMemberRepository implements MemberRepository {
 
     // 메모리니까 저장을 어딘가 하자. 여기선 Map
     private static Map<Long, Member> store = new HashMap<>();
