@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public class JdbcMemberRepository implements MemberRepository {
 
-    // ?? DB 랑 어떻게 연결하드라..
+    // JdbcTemplate
 
     @Override
     public void save(Member member) {
