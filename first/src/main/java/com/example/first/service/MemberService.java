@@ -3,7 +3,6 @@ package com.example.first.service;
 import com.example.first.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
-@Service
 public class MemberService {
     private MemberRepository memberRepository;
 
