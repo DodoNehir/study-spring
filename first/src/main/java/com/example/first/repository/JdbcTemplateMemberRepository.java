@@ -1,16 +1,12 @@
 package com.example.first.repository;
 
 import com.example.first.domain.Member;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -30,24 +26,24 @@ public class JdbcTemplateMemberRepository implements MemberRepository {
     public Member save(Member member) {
         // sql 에 SQL 작성하고, update로 추가
         // id 값이 시간따라 달라질텐데 원하는 아이디는 좀 아닐 걸..
-//        String sql = "INSERT INTO MEMBER VALUES (?, ?)";
-//        jdbcTemplate.update(sql, LocalDateTime.now(), member.getName());
-//        return member;
+        String sql = "INSERT INTO MEMBER VALUES (?, ?)";
+        jdbcTemplate.update(sql, LocalDateTime.now().getNano(), member.getName());
+        return member;
 
         // SimpleJdbcInsert 사용. id 값을 자동 만들 수 있다.
-        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
-        jdbcInsert.withTableName("member").usingGeneratedKeyColumns("id");
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", member.getName());
-
-        Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
-        member.setId(key.longValue());
-        return member;
+//        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+//        jdbcInsert.withTableName("member").usingGeneratedKeyColumns("id");
+//
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("name", member.getName());
+//
+//        Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
+//        member.setId(key.longValue());
+//        return member;
     }
 
     @Override
-    public Optional<Member> findById(String id) {
+    public Optional<Member> findById(Long id) {
         String sql = "SELECT * FROM MEMBER WHERE id = ?";
         List<Member> result = jdbcTemplate.query(sql, memberRowMapper(), id);
         return result.stream().findAny();
