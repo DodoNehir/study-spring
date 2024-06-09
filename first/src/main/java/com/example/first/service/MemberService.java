@@ -12,11 +12,11 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public Member signUp(Member member) {
+    public int signUp(Member member) {
         return memberRepository.save(member);
     }
 
-    public Optional<Member> findMemberById(Long id) {
+    public Optional<Member> findMemberById(int id) {
         return Optional.of(memberRepository.findById(id).get());
     }
 

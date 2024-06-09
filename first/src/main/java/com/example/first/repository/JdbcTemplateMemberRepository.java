@@ -23,12 +23,13 @@ public class JdbcTemplateMemberRepository implements MemberRepository {
 
 
     @Override
-    public Member save(Member member) {
+    public int save(Member member) {
         // sql 에 SQL 작성하고, update로 추가
         // id 값이 시간따라 달라질텐데 원하는 아이디는 좀 아닐 걸..
         String sql = "INSERT INTO MEMBER VALUES (?, ?)";
-        jdbcTemplate.update(sql, LocalDateTime.now().getNano(), member.getName());
-        return member;
+        int idValue = LocalDateTime.now().getNano();
+        jdbcTemplate.update(sql, idValue, member.getName());
+        return idValue;
 
         // SimpleJdbcInsert 사용. id 값을 자동 만들 수 있다.
 //        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
@@ -43,7 +44,7 @@ public class JdbcTemplateMemberRepository implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findById(Long id) {
+    public Optional<Member> findById(int id) {
         String sql = "SELECT * FROM MEMBER WHERE id = ?";
         List<Member> result = jdbcTemplate.query(sql, memberRowMapper(), id);
         return result.stream().findAny();
@@ -64,7 +65,7 @@ public class JdbcTemplateMemberRepository implements MemberRepository {
     private RowMapper<Member> memberRowMapper() {
         return (rs, rowNum) -> {
             Member member = new Member();
-            member.setId(rs.getLong("id"));
+            member.setId(rs.getInt("id"));
             member.setName(rs.getString("name"));
             return member;
         };
