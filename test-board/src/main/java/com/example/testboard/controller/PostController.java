@@ -48,7 +48,15 @@ public class PostController {
                                                    @RequestBody PostPatchRequestBody postPatchRequestBody) {
         var matchingPost = postService.updatePost(postId, postPatchRequestBody);
 
-        return ResponseEntity.ok(matchingPost);
+        return ResponseEntity.ok(matchingPost); // 201 created 라는 코드가 있긴 하지만 내용 전달을 못 하므로 200을 사용한다.
+
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePostByPostId(@PathVariable Long postId) {
+        postService.deletePost(postId);
+
+        return ResponseEntity.noContent().build(); // 204 noContent
 
     }
 }
