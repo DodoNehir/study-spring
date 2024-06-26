@@ -1,6 +1,7 @@
 package com.example.testboard.controller;
 
 import com.example.testboard.model.Post;
+import com.example.testboard.model.PostPatchRequestBody;
 import com.example.testboard.model.PostPostRequestBody;
 import com.example.testboard.service.PostService;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class PostController {
     public PostController(PostService postService) {
         this.postService = postService;
     }
+
 
     @GetMapping
     public ResponseEntity<List<Post>> getPosts() {
@@ -38,6 +40,15 @@ public class PostController {
     public ResponseEntity<Post> createPost(@RequestBody PostPostRequestBody postPostRequestBody) {
         var post = postService.createPost(postPostRequestBody);
         return ResponseEntity.ok(post);
+
+    }
+
+    @PatchMapping("/{postId}")
+    public ResponseEntity<Post> updatePostByPostId(@PathVariable Long postId,
+                                                   @RequestBody PostPatchRequestBody postPatchRequestBody) {
+        var matchingPost = postService.updatePost(postId, postPatchRequestBody);
+
+        return ResponseEntity.ok(matchingPost);
 
     }
 }

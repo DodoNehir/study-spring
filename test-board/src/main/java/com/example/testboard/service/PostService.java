@@ -1,8 +1,11 @@
 package com.example.testboard.service;
 
 import com.example.testboard.model.Post;
+import com.example.testboard.model.PostPatchRequestBody;
 import com.example.testboard.model.PostPostRequestBody;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ import java.util.Optional;
 public class PostService {
 
     private static final List<Post> posts = new ArrayList<>();
+
     static {
         posts.add(new Post(1L, "post 1", ZonedDateTime.now()));
         posts.add(new Post(2L, "post 2", ZonedDateTime.now()));
@@ -29,13 +33,25 @@ public class PostService {
     }
 
     public Post createPost(PostPostRequestBody postPostRequestBody) {
-        Long newpostId = posts.stream().mapToLong(post -> post.getPostId()).max().orElse(0L) + 1;
+        var newpostId = posts.stream().mapToLong(post -> post.getPostId()).max().orElse(0L) + 1;
 
-        Post newPost = new Post(newpostId, postPostRequestBody.body(), ZonedDateTime.now());
+        var newPost = new Post(newpostId, postPostRequestBody.body(), ZonedDateTime.now());
 
         posts.add(newPost);
 
         return newPost;
+    }
+
+    public Post updatePost(Long postId, PostPatchRequestBody postPatchRequestBody) {
+        Optional<Post> postOptional = posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
+
+        if (postOptional.isPresent()) {
+            var postToUpdate = postOptional.get();
+            postToUpdate.setBody(postPatchRequestBody.body());
+            return postToUpdate;
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post");
+        }
     }
 }
 
