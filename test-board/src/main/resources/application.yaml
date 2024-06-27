@@ -16,5 +16,5 @@ spring:
     password: board-postgres-password
   security:
     user:
-      name: admin
-      password: admin
+      name: board-admin
+      password: board-admin-password
