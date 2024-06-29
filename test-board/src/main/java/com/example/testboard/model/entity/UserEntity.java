@@ -24,57 +24,57 @@ import java.util.Random;
 @SQLDelete(sql = "UPDATE \"user\" SET deleteddatetime = CURRENT_TIMESTAMP WHERE userId = ?")
 public class UserEntity implements UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long userId;
 
-    @Column
-    private String username;
+  @Column
+  private String username;
 
-    @Column
-    private String password;
+  @Column
+  private String password;
 
-    @Column
-    private String profile;
+  @Column
+  private String profile;
 
-    @Column
-    private String description;
+  @Column
+  private String description;
 
-    @Column
-    private ZonedDateTime createdDateTime;
+  @Column
+  private ZonedDateTime createdDateTime;
 
-    @Column
-    private ZonedDateTime updatedDateTime;
+  @Column
+  private ZonedDateTime updatedDateTime;
 
-    @Column
-    private ZonedDateTime deletedDateTime;
+  @Column
+  private ZonedDateTime deletedDateTime;
 
 
-    public static UserEntity of(String username, String password) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(username);
-        userEntity.setPassword(password);
+  public static UserEntity of(String username, String password) {
+    UserEntity userEntity = new UserEntity();
+    userEntity.setUsername(username);
+    userEntity.setPassword(password);
 
-        userEntity.setProfile("https://avatar.iran.liara.run/public/" + new Random().nextInt(100));
+    userEntity.setProfile("https://avatar.iran.liara.run/public/" + (new Random().nextInt(100) + 1));
 
-        return userEntity;
-    }
+    return userEntity;
+  }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return null;
+  }
 
-    @PrePersist
-    private void prePersist() {
-        this.createdDateTime = ZonedDateTime.now();
-        this.updatedDateTime = this.createdDateTime;
-    }
+  @PrePersist
+  private void prePersist() {
+    this.createdDateTime = ZonedDateTime.now();
+    this.updatedDateTime = this.createdDateTime;
+  }
 
-    @PreUpdate
-    private void preUpdate() {
-        this.updatedDateTime = ZonedDateTime.now();
-    }
+  @PreUpdate
+  private void preUpdate() {
+    this.updatedDateTime = ZonedDateTime.now();
+  }
 
 
 }
