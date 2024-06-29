@@ -40,9 +40,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     var securityContext = SecurityContextHolder.getContext();
 
 
-    if (ObjectUtils.isEmpty(authorization) || !authorization.startsWith(BEARER)) {
-      throw new JwtTokenNotFoundException();
-    }
 
     // 정상적인 헤더값이 있고, 아직 인증 처리를 한 적이 없을 때
     if (!ObjectUtils.isEmpty(authorization)
