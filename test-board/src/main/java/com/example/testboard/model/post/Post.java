@@ -1,4 +1,4 @@
-package com.example.testboard.model;
+package com.example.testboard.model.post;
 
 import lombok.Getter;
 

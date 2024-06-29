@@ -1,5 +1,16 @@
 package com.example.testboard.model.user;
 
-public record UserSignUpRequestBody(String username, String password) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+
+public record UserSignUpRequestBody(
+
+    @NotBlank
+    String username,
+
+    @NotBlank
+    String password
+
+) {
 
 }

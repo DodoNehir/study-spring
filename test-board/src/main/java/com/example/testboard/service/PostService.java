@@ -1,13 +1,10 @@
 package com.example.testboard.service;
 
 import com.example.testboard.exception.post.PostNotFoundException;
-import com.example.testboard.model.Post;
-import com.example.testboard.model.PostPatchRequestBody;
-import com.example.testboard.model.PostPostRequestBody;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
+import com.example.testboard.model.post.Post;
+import com.example.testboard.model.post.PostPatchRequestBody;
+import com.example.testboard.model.post.PostPostRequestBody;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

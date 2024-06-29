@@ -1,8 +1,8 @@
 package com.example.testboard.controller;
 
-import com.example.testboard.model.Post;
-import com.example.testboard.model.PostPatchRequestBody;
-import com.example.testboard.model.PostPostRequestBody;
+import com.example.testboard.model.post.Post;
+import com.example.testboard.model.post.PostPatchRequestBody;
+import com.example.testboard.model.post.PostPostRequestBody;
 import com.example.testboard.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
