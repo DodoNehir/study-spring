@@ -43,4 +43,11 @@ public class PostEntity {
   @ManyToOne
   @JoinColumn(name = "userId")
   private UserEntity user;
+
+  public static PostEntity of(String body, UserEntity user) {
+    PostEntity postEntity = new PostEntity();
+    postEntity.body = body;
+    postEntity.user = user;
+    return postEntity;
+  }
 }

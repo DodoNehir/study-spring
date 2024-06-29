@@ -1,75 +1,72 @@
 package com.example.testboard.service;
 
 import com.example.testboard.exception.post.PostNotFoundException;
+import com.example.testboard.exception.user.UserNotFoundException;
+import com.example.testboard.model.entity.PostEntity;
+import com.example.testboard.model.entity.UserEntity;
 import com.example.testboard.model.post.Post;
 import com.example.testboard.model.post.PostPatchRequestBody;
 import com.example.testboard.model.post.PostPostRequestBody;
+import com.example.testboard.repository.PostEntityRepository;
 import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PostService {
 
-    private static final List<Post> posts = new ArrayList<>();
+  private final PostEntityRepository postEntityRepository;
 
-    static {
-        posts.add(new Post(1L, "post 1", ZonedDateTime.now()));
-        posts.add(new Post(2L, "post 2", ZonedDateTime.now()));
-        posts.add(new Post(3L, "post 3", ZonedDateTime.now()));
+  public PostService(PostEntityRepository postEntityRepository) {
+    this.postEntityRepository = postEntityRepository;
+  }
+
+//    public List<Post> getPosts() {
+//        return postEntityRepository.findAll();
+  // TODO List<PostEntity> 를 List<Post>로 바꿀 방법?
+//    }
+
+  public Post getPostByPostId(Long postId) {
+
+    PostEntity postEntity = postEntityRepository.findById(postId)
+        .orElseThrow(PostNotFoundException::new);
+
+    return Post.from(postEntity);
+  }
+
+  public Post createPost(PostPostRequestBody postPostRequestBody, UserEntity userEntity) {
+
+    PostEntity savedPostEntity = postEntityRepository.save(
+        PostEntity.of(postPostRequestBody.body(), userEntity)
+    );
+    return Post.from(savedPostEntity);
+  }
+
+  public Post updatePost(Long postId, PostPatchRequestBody postPatchRequestBody,
+      UserEntity userEntity) {
+
+    // post 확인
+    PostEntity postEntity = postEntityRepository.findById(postId)
+        .orElseThrow(() -> new PostNotFoundException(postId));
+
+    // user 확인
+    if (!postEntity.getUser().equals(userEntity)) {
+      throw new UserNotFoundException();
     }
 
+    postEntity.setBody(postPatchRequestBody.body());
+    PostEntity updatedPostEntity = postEntityRepository.save(postEntity);
+    return Post.from(updatedPostEntity);
+  }
 
-    public List<Post> getPosts() {
-        return posts;
+  public void deletePost(Long postId, UserEntity userEntity) {
+    PostEntity postEntity = postEntityRepository.findById(postId)
+        .orElseThrow(PostNotFoundException::new);
+
+    if (!postEntity.getUser().equals(userEntity)) {
+      throw new UserNotFoundException();
     }
 
-    public Optional<Post> getPostByPostId(Long postId) {
-        var postOptional = posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
-
-        if (postOptional.isPresent()) {
-            var postToGet = postOptional.get();
-            return Optional.of(postToGet);
-        } else {
-            throw new PostNotFoundException(postId);
-        }
-    }
-
-    public Post createPost(PostPostRequestBody postPostRequestBody) {
-        var newpostId = posts.stream().mapToLong(post -> post.getPostId()).max().orElse(0L) + 1;
-
-        var newPost = new Post(newpostId, postPostRequestBody.body(), ZonedDateTime.now());
-
-        posts.add(newPost);
-
-        return newPost;
-    }
-
-    public Post updatePost(Long postId, PostPatchRequestBody postPatchRequestBody) {
-        Optional<Post> postOptional = posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
-
-        if (postOptional.isPresent()) {
-            var postToUpdate = postOptional.get();
-            postToUpdate.setBody(postPatchRequestBody.body());
-            return postToUpdate;
-        } else {
-            throw new PostNotFoundException(postId);
-        }
-    }
-
-    public void deletePost(Long postId) {
-        Optional<Post> postOptional = posts.stream().filter(post -> postId.equals(post.getPostId())).findFirst();
-
-        if (postOptional.isPresent()) {
-            var postToDelete = postOptional.get();
-            posts.remove(postToDelete);
-        } else {
-            throw new PostNotFoundException(postId);
-        }
-    }
+    postEntityRepository.delete(postEntity);
+  }
 }
 
 
