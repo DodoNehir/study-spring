@@ -1,10 +1,12 @@
 package com.example.testboard.service;
 
 import com.example.testboard.exception.user.UserAlreadyExistsException;
+import com.example.testboard.exception.user.UserNotAllowedException;
 import com.example.testboard.exception.user.UserNotFoundException;
 import com.example.testboard.model.entity.UserEntity;
 import com.example.testboard.model.user.User;
 import com.example.testboard.model.user.UserAuthenticationResponse;
+import com.example.testboard.model.user.UserPatchRequestBody;
 import com.example.testboard.repository.UserEntityRepository;
 import java.util.List;
 import java.util.Optional;
@@ -87,9 +89,28 @@ public class UserService implements UserDetailsService {
   }
 
   public User getUser(String username) {
-    UserEntity userEntity = userEntityRepository.findByUsername(username)
+    UserEntity userEntity = userEntityRepository
+        .findByUsername(username)
         .orElseThrow(() -> new UserNotFoundException(username));
 
     return User.from(userEntity);
+  }
+
+  public User updateUser(String username, UserPatchRequestBody userPatchRequestBody,
+      UserEntity currentUser) {
+
+    UserEntity userEntity = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    if (!userEntity.equals(currentUser)) {
+      throw new UserNotAllowedException();
+    }
+
+    if (userPatchRequestBody != null) {
+      userEntity.setDescription(userPatchRequestBody.description());
+    }
+
+    return User.from(userEntityRepository.save(userEntity));
   }
 }

@@ -8,6 +8,7 @@ import com.example.testboard.model.post.Post;
 import com.example.testboard.model.post.PostPatchRequestBody;
 import com.example.testboard.model.post.PostPostRequestBody;
 import com.example.testboard.repository.PostEntityRepository;
+import com.example.testboard.repository.UserEntityRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,17 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
   private final PostEntityRepository postEntityRepository;
+  private final UserEntityRepository userEntityRepository;
 
-  public PostService(PostEntityRepository postEntityRepository) {
+  public PostService(PostEntityRepository postEntityRepository,
+      UserEntityRepository userEntityRepository) {
     this.postEntityRepository = postEntityRepository;
+    this.userEntityRepository = userEntityRepository;
   }
 
-    public List<Post> getPosts() {
-        return postEntityRepository.findAll().stream().map(Post::from).toList();
-    }
+  public List<Post> getPosts() {
+    return postEntityRepository.findAll().stream().map(Post::from).toList();
+  }
 
   public Post getPostByPostId(Long postId) {
 
@@ -66,6 +70,17 @@ public class PostService {
     }
 
     postEntityRepository.delete(postEntity);
+  }
+
+  public List<Post> getPostByUsername(String username) {
+    // user 존재 여부 조회
+    UserEntity userEntity = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    List<PostEntity> postEntities = postEntityRepository.findByUser(userEntity);
+
+    return postEntities.stream().map(Post::from).toList();
   }
 }
 
