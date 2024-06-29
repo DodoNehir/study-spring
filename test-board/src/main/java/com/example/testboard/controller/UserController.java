@@ -1,6 +1,8 @@
 package com.example.testboard.controller;
 
 import com.example.testboard.model.user.User;
+import com.example.testboard.model.user.UserAuthenticationResponse;
+import com.example.testboard.model.user.UserLoginRequestBody;
 import com.example.testboard.model.user.UserSignUpRequestBody;
 import com.example.testboard.service.UserService;
 import jakarta.validation.Valid;
@@ -30,6 +32,17 @@ public class UserController {
 
     return ResponseEntity.ok(newUser);
 //    return new ResponseEntity<>(newUser, HttpStatus.OK);
+  }
+
+  @PostMapping("/authenticate")
+  public ResponseEntity<UserAuthenticationResponse> authenticate(
+      @Valid @RequestBody UserLoginRequestBody userLoginRequestBody) {
+    var response = userService.authenticate(
+        userLoginRequestBody.username(),
+        userLoginRequestBody.password());
+
+
+    return ResponseEntity.ok(response);
   }
 
 }

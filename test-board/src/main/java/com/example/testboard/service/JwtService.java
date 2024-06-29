@@ -20,6 +20,10 @@ public class JwtService {
     return generateToken(userDetails.getUsername());
   }
 
+  public String generateAccessToken(String username) {
+    return generateToken(username);
+  }
+
   public String getUsername(String accessToken) {
     return getSubject(accessToken);
   }

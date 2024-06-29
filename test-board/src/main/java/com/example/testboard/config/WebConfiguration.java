@@ -47,7 +47,9 @@ public class WebConfiguration {
         .authorizeHttpRequests(
             (requests) ->
                 requests
-                    .requestMatchers(HttpMethod.POST, "/api/v1/users")
+                    .requestMatchers(HttpMethod.POST,
+                        "/api/v1/users",
+                        "/api/v1/users/authenticate")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

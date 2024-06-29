@@ -4,7 +4,9 @@ import com.example.testboard.exception.user.UserAlreadyExistsException;
 import com.example.testboard.exception.user.UserNotFoundException;
 import com.example.testboard.model.entity.UserEntity;
 import com.example.testboard.model.user.User;
+import com.example.testboard.model.user.UserAuthenticationResponse;
 import com.example.testboard.repository.UserEntityRepository;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,12 +19,15 @@ public class UserService implements UserDetailsService {
 
   private UserEntityRepository userEntityRepository;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private JwtService jwtService;
 
   public UserService(
       UserEntityRepository userEntityRepository,
-      BCryptPasswordEncoder bCryptPasswordEncoder) {
+      BCryptPasswordEncoder bCryptPasswordEncoder,
+      JwtService jwtService) {
     this.userEntityRepository = userEntityRepository;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    this.jwtService = jwtService;
   }
 
   @Override
@@ -46,4 +51,23 @@ public class UserService implements UserDetailsService {
 
     return User.from(savedUserEntity);
   }
+
+  public UserAuthenticationResponse authenticate(String username, String password) {
+    // username 확인
+    UserEntity userEntity = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    // password 확인
+    if (bCryptPasswordEncoder.matches(password, userEntity.getPassword())) {
+      // jwt 생성
+      String accessToken = jwtService.generateAccessToken(userEntity.getUsername());
+      // UserAuthenticationResponse로 return
+      return new UserAuthenticationResponse(accessToken);
+    } else {
+      throw new UserNotFoundException();
+    }
+
+  }
+
 }
