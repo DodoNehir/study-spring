@@ -20,7 +20,9 @@ import java.util.Random;
 @EqualsAndHashCode
 @ToString
 @Entity
-@Table(name = "\"user\"")
+@Table(
+    name = "\"user\"",
+    indexes = {@Index(name = "user_username_idx", columnList = "username", unique = true)})
 @SQLDelete(sql = "UPDATE \"user\" SET deleteddatetime = CURRENT_TIMESTAMP WHERE userId = ?")
 public class UserEntity implements UserDetails {
 
@@ -55,7 +57,8 @@ public class UserEntity implements UserDetails {
     userEntity.setUsername(username);
     userEntity.setPassword(password);
 
-    userEntity.setProfile("https://avatar.iran.liara.run/public/" + (new Random().nextInt(100) + 1));
+    userEntity.setProfile(
+        "https://avatar.iran.liara.run/public/" + (new Random().nextInt(100) + 1));
 
     return userEntity;
   }

@@ -15,25 +15,32 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode
 @ToString
 @Entity
-@Table(name = "post")
+@Table(
+    name = "post",
+    indexes = {@Index(name = "post_userid_idx", columnList = "userId")})
 @SQLDelete(sql = "UPDATE \"post\" SET deleteddatetime = CURRENT_TIMESTAMP WHERE postId = ?")
 // deprecated in Hibernate 6.3
 // @Where(clause = "deleteddatetime IS NULL")
 @SQLRestriction("deleteddatetime IS NULL")
 public class PostEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
 
-    @Column(columnDefinition = "TEXT")
-    private String body;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long postId;
 
-    @Column
-    private ZonedDateTime createdDateTime;
+  @Column(columnDefinition = "TEXT")
+  private String body;
 
-    @Column
-    private ZonedDateTime updatedDateTime;
+  @Column
+  private ZonedDateTime createdDateTime;
 
-    @Column
-    private ZonedDateTime deletedDateTime;
+  @Column
+  private ZonedDateTime updatedDateTime;
+
+  @Column
+  private ZonedDateTime deletedDateTime;
+
+  @ManyToOne
+  @JoinColumn(name = "userId")
+  private UserEntity user;
 }
