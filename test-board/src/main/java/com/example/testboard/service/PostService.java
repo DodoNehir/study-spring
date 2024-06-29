@@ -8,6 +8,7 @@ import com.example.testboard.model.post.Post;
 import com.example.testboard.model.post.PostPatchRequestBody;
 import com.example.testboard.model.post.PostPostRequestBody;
 import com.example.testboard.repository.PostEntityRepository;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,10 +20,9 @@ public class PostService {
     this.postEntityRepository = postEntityRepository;
   }
 
-//    public List<Post> getPosts() {
-//        return postEntityRepository.findAll();
-  // TODO List<PostEntity> 를 List<Post>로 바꿀 방법?
-//    }
+    public List<Post> getPosts() {
+        return postEntityRepository.findAll().stream().map(Post::from).toList();
+    }
 
   public Post getPostByPostId(Long postId) {
 

@@ -6,6 +6,8 @@ import com.example.testboard.model.entity.UserEntity;
 import com.example.testboard.model.user.User;
 import com.example.testboard.model.user.UserAuthenticationResponse;
 import com.example.testboard.repository.UserEntityRepository;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -70,4 +72,24 @@ public class UserService implements UserDetailsService {
 
   }
 
+  public List<User> getUsers(String query) {
+    List<UserEntity> userEntities;
+
+    if (!query.isBlank()) {
+      // TODO : user 검색
+      userEntities = userEntityRepository.findByUsernameContaining(query);
+    } else {
+      // 모든 유저 검색
+      userEntities = userEntityRepository.findAll();
+    }
+
+    return userEntities.stream().map(User::from).toList();
+  }
+
+  public User getUser(String username) {
+    UserEntity userEntity = userEntityRepository.findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    return User.from(userEntity);
+  }
 }

@@ -27,11 +27,11 @@ public class PostController {
     }
 
 
-//    @GetMapping
-//    public ResponseEntity<List<Post>> getPosts() {
-//        logger.debug("Get /api/v1/posts");
-//        return ResponseEntity.ok(postService.getPosts());
-//    }
+    @GetMapping
+    public ResponseEntity<List<Post>> getPosts() {
+        logger.debug("Get /api/v1/posts");
+        return ResponseEntity.ok(postService.getPosts());
+    }
 
     @GetMapping("/{postId}")
     public ResponseEntity<Post> getPostByPostId(@PathVariable Long postId) {
