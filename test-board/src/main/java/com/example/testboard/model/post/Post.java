@@ -1,7 +1,6 @@
 package com.example.testboard.model.post;
 
 import com.example.testboard.model.entity.PostEntity;
-import com.example.testboard.model.entity.UserEntity;
 import com.example.testboard.model.user.User;
 import java.time.ZonedDateTime;
 
@@ -13,7 +12,8 @@ public record Post(
     Long repliesCount,
     ZonedDateTime createdDateTime,
     ZonedDateTime updatedDateTime,
-    ZonedDateTime deletedDateTime
+    ZonedDateTime deletedDateTime,
+    Boolean isLiking
 ) {
 
   public static Post from(PostEntity postEntity) {
@@ -24,7 +24,21 @@ public record Post(
         postEntity.getRepliesCount(),
         postEntity.getCreatedDateTime(),
         postEntity.getUpdatedDateTime(),
-        postEntity.getDeletedDateTime()
+        postEntity.getDeletedDateTime(),
+        null
+    );
+  }
+
+  public static Post from(PostEntity postEntity, boolean isLiking) {
+    return new Post(
+        postEntity.getPostId(),
+        postEntity.getBody(),
+        User.from(postEntity.getUser()),
+        postEntity.getRepliesCount(),
+        postEntity.getCreatedDateTime(),
+        postEntity.getUpdatedDateTime(),
+        postEntity.getDeletedDateTime(),
+        isLiking
     );
   }
 

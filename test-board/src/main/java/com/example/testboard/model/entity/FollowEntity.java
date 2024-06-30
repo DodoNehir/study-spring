@@ -27,9 +27,6 @@ import org.hibernate.annotations.SQLRestriction;
     indexes = {
         @Index(name = "follow_follower_following_idx", columnList = "follower, following", unique = true)
     })
-// deprecated in Hibernate 6.3
-// @Where(clause = "deleteddatetime IS NULL")
-@SQLRestriction("deleteddatetime IS NULL")
 public class FollowEntity {
 
   @Id

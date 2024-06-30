@@ -29,7 +29,6 @@ import org.hibernate.annotations.SQLRestriction;
     })
 // deprecated in Hibernate 6.3
 // @Where(clause = "deleteddatetime IS NULL")
-@SQLRestriction("deleteddatetime IS NULL")
 public class LikeEntity {
 
   @Id

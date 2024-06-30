@@ -29,8 +29,6 @@ import org.hibernate.annotations.SQLRestriction;
     indexes = {@Index(name = "reply_postid_idx", columnList = "postId"),
         @Index(name = "reply_userid_idx", columnList = "userId")})
 @SQLDelete(sql = "UPDATE \"reply\" SET deleteddatetime = CURRENT_TIMESTAMP WHERE postId = ?")
-// deprecated in Hibernate 6.3
-// @Where(clause = "deleteddatetime IS NULL")
 @SQLRestriction("deleteddatetime IS NULL")
 public class ReplyEntity {
 

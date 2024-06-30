@@ -56,4 +56,15 @@ public class PostEntity {
     postEntity.user = user;
     return postEntity;
   }
+
+  @PrePersist
+  private void prePersist() {
+    this.createdDateTime = ZonedDateTime.now();
+    this.updatedDateTime = this.createdDateTime;
+  }
+
+  @PreUpdate
+  private void preUpdate() {
+    this.updatedDateTime = ZonedDateTime.now();
+  }
 }
