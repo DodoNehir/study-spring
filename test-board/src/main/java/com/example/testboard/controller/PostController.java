@@ -1,5 +1,6 @@
 package com.example.testboard.controller;
 
+import com.example.testboard.model.entity.PostEntity;
 import com.example.testboard.model.entity.UserEntity;
 import com.example.testboard.model.post.Post;
 import com.example.testboard.model.post.PostPatchRequestBody;
@@ -12,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/posts")
@@ -53,7 +53,7 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<Post> updatePostByPostId(@PathVariable Long postId,
+    public ResponseEntity<Post> updatePost(@PathVariable Long postId,
                                                    @RequestBody PostPatchRequestBody postPatchRequestBody,
         Authentication authentication) {
         logger.info("PATCH /api/v1/posts/{}", postId);
@@ -64,11 +64,20 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePostByPostId(@PathVariable Long postId, Authentication authentication) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId, Authentication authentication) {
         logger.info("DELETE /api/v1/posts/{}", postId);
         postService.deletePost(postId, (UserEntity) authentication.getPrincipal());
 
         return ResponseEntity.noContent().build(); // 204 noContent
+
+    }
+
+
+    @PostMapping("/{postId}/likes")
+    public ResponseEntity<Post> toggleLike(@PathVariable Long postId, Authentication authentication) {
+        Post post = postService.toggleLike(postId, (UserEntity) authentication.getPrincipal());
+
+        return ResponseEntity.ok(post);
 
     }
 }
