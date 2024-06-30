@@ -80,26 +80,35 @@ public class UserService implements UserDetailsService {
 
   }
 
-  public List<User> getUsers(String query) {
+  public List<User> getUsers(String query, UserEntity currentUser) {
     List<UserEntity> userEntities;
 
-    if (!query.isBlank()) {
-      // TODO : user 검색
+    if (query != null && !query.isBlank()) {
+      // 검색어로 user 검색
       userEntities = userEntityRepository.findByUsernameContaining(query);
     } else {
       // 모든 유저 검색
       userEntities = userEntityRepository.findAll();
     }
 
-    return userEntities.stream().map(User::from).toList();
+    return userEntities.stream()
+        .map(userEntity -> getUserWithFollowingStatus(userEntity, currentUser))
+        .toList();
   }
 
-  public User getUser(String username) {
+  public User getUser(String username, UserEntity currentUser) {
     UserEntity userEntity = userEntityRepository
         .findByUsername(username)
         .orElseThrow(() -> new UserNotFoundException(username));
 
-    return User.from(userEntity);
+    return getUserWithFollowingStatus(userEntity, currentUser);
+  }
+
+  private User getUserWithFollowingStatus(UserEntity userEntity, UserEntity currentUser) {
+    boolean isFollowing =
+        followEntityRepository.findByFollowerAndFollowing(currentUser, userEntity)
+            .isPresent();
+    return User.from(userEntity, isFollowing);
   }
 
   public User updateUser(String username, UserPatchRequestBody userPatchRequestBody,
@@ -141,7 +150,7 @@ public class UserService implements UserDetailsService {
     currentUser.setFollowingsCount(following.getFollowingsCount() + 1);
     userEntityRepository.saveAll(List.of(following, currentUser));
 
-    return User.from(following);
+    return User.from(following, true);
   }
 
   @Transactional
@@ -163,10 +172,10 @@ public class UserService implements UserDetailsService {
     currentUser.setFollowersCount(Math.max(0, following.getFollowersCount() - 1));
     userEntityRepository.saveAll(List.of(following, currentUser));
 
-    return User.from(following);
+    return User.from(following, false);
   }
 
-  public List<User> getFollowers(String username) {
+  public List<User> getFollowers(String username, UserEntity currentUser) {
     // username 을 구독한 사람들의 리스트.
     // SELECT * from follow WHERE following = username
     UserEntity following = userEntityRepository
@@ -175,10 +184,12 @@ public class UserService implements UserDetailsService {
 
     List<FollowEntity> followers = followEntityRepository.findByFollowing(following);
 
-    return followers.stream().map(followEntity -> User.from(followEntity.getFollower())).toList();
+    return followers.stream()
+        .map(followEntity -> getUserWithFollowingStatus(followEntity.getFollower(), currentUser))
+        .toList();
   }
 
-  public List<User> getFollowings(String username) {
+  public List<User> getFollowings(String username, UserEntity currentUser) {
     // username 이 구독하고 있는 사람들의 리스트
     // SELECT * from follow WHERE follower = username
     UserEntity follower = userEntityRepository
@@ -187,6 +198,8 @@ public class UserService implements UserDetailsService {
 
     List<FollowEntity> followings = followEntityRepository.findByFollower(follower);
 
-    return followings.stream().map(followEntity -> User.from(followEntity.getFollowing())).toList();
+    return followings.stream()
+        .map(followEntity -> getUserWithFollowingStatus(followEntity.getFollowing(), currentUser))
+        .toList();
   }
 }

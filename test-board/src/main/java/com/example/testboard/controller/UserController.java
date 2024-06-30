@@ -36,14 +36,20 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<List<User>> getUsers(@RequestParam(required = false) String query) {
+  public ResponseEntity<List<User>> getUsers(
+      @RequestParam(required = false) String query,
+      Authentication authentication) {
     // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
-    return ResponseEntity.ok(userService.getUsers(query));
+    return ResponseEntity.ok(
+        userService.getUsers(query, (UserEntity) authentication.getPrincipal()));
   }
 
   @GetMapping("/{username}")
-  public ResponseEntity<User> getUser(@PathVariable String username) {
-    return ResponseEntity.ok(userService.getUser(username));
+  public ResponseEntity<User> getUser(
+      @PathVariable String username,
+      Authentication authentication) {
+    return ResponseEntity.ok(
+        userService.getUser(username, (UserEntity) authentication.getPrincipal()));
   }
 
   @PatchMapping("/{username}")
@@ -60,7 +66,8 @@ public class UserController {
   public ResponseEntity<List<Post>> getPostsByUsername(
       @PathVariable String username,
       Authentication authentication) {
-    List<Post> posts = postService.getPostByUsername(username, (UserEntity) authentication.getPrincipal());
+    List<Post> posts = postService.getPostByUsername(username,
+        (UserEntity) authentication.getPrincipal());
     return ResponseEntity.ok(posts);
   }
 
@@ -84,14 +91,20 @@ public class UserController {
 
   @GetMapping("/{username}/followers")
   public ResponseEntity<List<User>> getFollowers(
-      @PathVariable String username) {
-    return ResponseEntity.ok(userService.getFollowers(username));
+      @PathVariable String username,
+      Authentication authentication) {
+    return ResponseEntity.ok(
+        userService.getFollowers(username, (UserEntity) authentication.getPrincipal())
+    );
   }
 
   @GetMapping("/{username}/followings")
   public ResponseEntity<List<User>> getFollowings(
-      @PathVariable String username) {
-    return ResponseEntity.ok(userService.getFollowings(username));
+      @PathVariable String username,
+      Authentication authentication) {
+    return ResponseEntity.ok(
+        userService.getFollowings(username, (UserEntity) authentication.getPrincipal())
+    );
   }
 
 
