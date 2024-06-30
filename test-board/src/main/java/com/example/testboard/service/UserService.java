@@ -145,7 +145,7 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional
-  public User unFollow(String username, UserEntity currentUser) {
+  public User unfollow(String username, UserEntity currentUser) {
     UserEntity following = userEntityRepository
         .findByUsername(username)
         .orElseThrow(() -> new UserNotFoundException(username));
@@ -164,5 +164,29 @@ public class UserService implements UserDetailsService {
     userEntityRepository.saveAll(List.of(following, currentUser));
 
     return User.from(following);
+  }
+
+  public List<User> getFollowers(String username) {
+    // username 을 구독한 사람들의 리스트.
+    // SELECT * from follow WHERE following = username
+    UserEntity following = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    List<FollowEntity> followers = followEntityRepository.findByFollowing(following);
+
+    return followers.stream().map(followEntity -> User.from(followEntity.getFollower())).toList();
+  }
+
+  public List<User> getFollowings(String username) {
+    // username 이 구독하고 있는 사람들의 리스트
+    // SELECT * from follow WHERE follower = username
+    UserEntity follower = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    List<FollowEntity> followings = followEntityRepository.findByFollower(follower);
+
+    return followings.stream().map(followEntity -> User.from(followEntity.getFollowing())).toList();
   }
 }

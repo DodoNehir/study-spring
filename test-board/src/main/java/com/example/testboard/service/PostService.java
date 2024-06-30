@@ -106,7 +106,7 @@ public class PostService {
       postEntity.setLikesCount(postEntity.getLikesCount() + 1);
     }
 
-    return Post.from(postEntityRepository.save(postEntity););
+    return Post.from(postEntityRepository.save(postEntity));
   }
 }
 

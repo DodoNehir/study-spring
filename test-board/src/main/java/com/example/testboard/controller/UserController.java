@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,7 +43,6 @@ public class UserController {
 
   @GetMapping("/{username}")
   public ResponseEntity<User> getUser(@PathVariable String username) {
-    // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
     return ResponseEntity.ok(userService.getUser(username));
   }
 
@@ -53,7 +51,6 @@ public class UserController {
       @PathVariable String username,
       @RequestBody UserPatchRequestBody requestBody,
       Authentication authentication) {
-    // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
     User user = userService.updateUser(username, requestBody,
         (UserEntity) authentication.getPrincipal());
     return ResponseEntity.ok(user);
@@ -62,7 +59,6 @@ public class UserController {
   @GetMapping("/{username}/posts")
   public ResponseEntity<List<Post>> getPostByUsername(
       @PathVariable String username) {
-    // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
     List<Post> posts = postService.getPostByUsername(username);
     return ResponseEntity.ok(posts);
   }
@@ -71,7 +67,7 @@ public class UserController {
   public ResponseEntity<User> follow(
       @PathVariable String username,
       Authentication authentication) {
-    // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
+    // userEntity가 username을 follow
     var user = userService.follow(username, (UserEntity) authentication.getPrincipal());
     return ResponseEntity.ok(user);
   }
@@ -80,9 +76,21 @@ public class UserController {
   public ResponseEntity<User> unfollow(
       @PathVariable String username,
       Authentication authentication) {
-    // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
-    var user = userService.unFollow(username, (UserEntity) authentication.getPrincipal());
+    // userEntity 가 username 을 unfollow
+    var user = userService.unfollow(username, (UserEntity) authentication.getPrincipal());
     return ResponseEntity.ok(user);
+  }
+
+  @GetMapping("/{username}/followers")
+  public ResponseEntity<List<User>> getFollowers(
+      @PathVariable String username) {
+    return ResponseEntity.ok(userService.getFollowers(username));
+  }
+
+  @GetMapping("/{username}/followings")
+  public ResponseEntity<List<User>> getFollowings(
+      @PathVariable String username) {
+    return ResponseEntity.ok(userService.getFollowings(username));
   }
 
 
