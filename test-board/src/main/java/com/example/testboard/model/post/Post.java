@@ -10,6 +10,7 @@ public record Post(
     Long postId,
     String body,
     User user,
+    Long repliesCount,
     ZonedDateTime createdDateTime,
     ZonedDateTime updatedDateTime,
     ZonedDateTime deletedDateTime
@@ -20,6 +21,7 @@ public record Post(
         postEntity.getPostId(),
         postEntity.getBody(),
         User.from(postEntity.getUser()),
+        postEntity.getRepliesCount(),
         postEntity.getCreatedDateTime(),
         postEntity.getUpdatedDateTime(),
         postEntity.getDeletedDateTime()
