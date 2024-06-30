@@ -1,22 +1,25 @@
 package com.example.testboard.service;
 
+import com.example.testboard.exception.follow.FollowAlreadyExistsException;
+import com.example.testboard.exception.follow.FollowNotFoundException;
+import com.example.testboard.exception.follow.InvalidFollowException;
 import com.example.testboard.exception.user.UserAlreadyExistsException;
 import com.example.testboard.exception.user.UserNotAllowedException;
 import com.example.testboard.exception.user.UserNotFoundException;
+import com.example.testboard.model.entity.FollowEntity;
 import com.example.testboard.model.entity.UserEntity;
 import com.example.testboard.model.user.User;
 import com.example.testboard.model.user.UserAuthenticationResponse;
 import com.example.testboard.model.user.UserPatchRequestBody;
+import com.example.testboard.repository.FollowEntityRepository;
 import com.example.testboard.repository.UserEntityRepository;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -24,14 +27,17 @@ public class UserService implements UserDetailsService {
   private UserEntityRepository userEntityRepository;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private JwtService jwtService;
+  private FollowEntityRepository followEntityRepository;
 
   public UserService(
       UserEntityRepository userEntityRepository,
       BCryptPasswordEncoder bCryptPasswordEncoder,
-      JwtService jwtService) {
+      JwtService jwtService,
+      FollowEntityRepository followEntityRepository) {
     this.userEntityRepository = userEntityRepository;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     this.jwtService = jwtService;
+    this.followEntityRepository = followEntityRepository;
   }
 
   @Override
@@ -112,5 +118,51 @@ public class UserService implements UserDetailsService {
     }
 
     return User.from(userEntityRepository.save(userEntity));
+  }
+
+  @Transactional
+  public User follow(String username, UserEntity currentUser) {
+    UserEntity following = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    if (following.equals(currentUser)) {
+      throw new InvalidFollowException("A user cannot follow itself");
+    }
+
+    followEntityRepository.findByFollowerAndFollowing(following, currentUser)
+        .ifPresent(followEntity -> {
+          throw new FollowAlreadyExistsException(currentUser, following);
+        });
+
+    followEntityRepository.save(FollowEntity.of(currentUser, following));
+
+    following.setFollowersCount(following.getFollowersCount() + 1);
+    currentUser.setFollowingsCount(following.getFollowingsCount() + 1);
+    userEntityRepository.saveAll(List.of(following, currentUser));
+
+    return User.from(following);
+  }
+
+  @Transactional
+  public User unFollow(String username, UserEntity currentUser) {
+    UserEntity following = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    if (following.equals(currentUser)) {
+      throw new InvalidFollowException("A user cannot unfollow itself");
+    }
+
+    FollowEntity followEntity = followEntityRepository.findByFollowerAndFollowing(following,
+            currentUser)
+        .orElseThrow(FollowNotFoundException::new);
+    followEntityRepository.delete(followEntity);
+
+    following.setFollowingsCount(Math.max(0, following.getFollowingsCount() - 1));
+    currentUser.setFollowersCount(Math.max(0, following.getFollowersCount() - 1));
+    userEntityRepository.saveAll(List.of(following, currentUser));
+
+    return User.from(following);
   }
 }

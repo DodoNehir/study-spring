@@ -23,36 +23,35 @@ import org.hibernate.annotations.SQLRestriction;
 @ToString
 @Entity
 @Table(
-    name = "\"like\"",
+    name = "\"follow\"",
     indexes = {
-        @Index(name = "like_userid_postid_idx", columnList = "userId, postId", unique = true)
+        @Index(name = "follow_follower_following_idx", columnList = "follower, following", unique = true)
     })
 // deprecated in Hibernate 6.3
 // @Where(clause = "deleteddatetime IS NULL")
 @SQLRestriction("deleteddatetime IS NULL")
-public class LikeEntity {
+public class FollowEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long likeId;
+  private Long followId;
 
   @Column
   private ZonedDateTime createdDateTime;
 
   @ManyToOne
-  @JoinColumn(name = "userId")
-  private UserEntity user;
+  @JoinColumn(name = "follower")
+  private UserEntity follower;
 
   @ManyToOne
-  @JoinColumn(name = "postId")
-  private PostEntity post;
+  @JoinColumn(name = "following")
+  private UserEntity following;
 
-  public static LikeEntity of(UserEntity userEntity, PostEntity postEntity) {
-    LikeEntity replyEntity = new LikeEntity();
-    replyEntity.user = userEntity;
-    replyEntity.post = postEntity;
-
-    return replyEntity;
+  public static FollowEntity of(UserEntity follower, UserEntity following) {
+    FollowEntity followEntity = new FollowEntity();
+    followEntity.setFollower(follower);
+    followEntity.setFollowing(following);
+    return followEntity;
   }
 
   @PrePersist

@@ -13,7 +13,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,16 +54,37 @@ public class UserController {
       @RequestBody UserPatchRequestBody requestBody,
       Authentication authentication) {
     // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
-    User user = userService.updateUser(username, requestBody, (UserEntity) authentication.getPrincipal());
+    User user = userService.updateUser(username, requestBody,
+        (UserEntity) authentication.getPrincipal());
     return ResponseEntity.ok(user);
   }
 
   @GetMapping("/{username}/posts")
-  public ResponseEntity<List<Post>> getPostByUsername(@PathVariable String username) {
+  public ResponseEntity<List<Post>> getPostByUsername(
+      @PathVariable String username) {
     // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
     List<Post> posts = postService.getPostByUsername(username);
     return ResponseEntity.ok(posts);
   }
+
+  @PostMapping("/{username}/follows")
+  public ResponseEntity<User> follow(
+      @PathVariable String username,
+      Authentication authentication) {
+    // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
+    var user = userService.follow(username, (UserEntity) authentication.getPrincipal());
+    return ResponseEntity.ok(user);
+  }
+
+  @DeleteMapping("/{username}/follows")
+  public ResponseEntity<User> unfollow(
+      @PathVariable String username,
+      Authentication authentication) {
+    // 검색어가 없을 때는 모든 유저 검색. 검색어가 있다면 해당 검색어로 유저 검색
+    var user = userService.unFollow(username, (UserEntity) authentication.getPrincipal());
+    return ResponseEntity.ok(user);
+  }
+
 
   @PostMapping
   public ResponseEntity<User> signUp(
