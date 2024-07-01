@@ -96,6 +96,14 @@ public class ReplyService {
     postEntityRepository.save(postEntity);
   }
 
+  public List<Reply> getReplies(String username) {
+    UserEntity userEntity = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    List<ReplyEntity> replies = replyEntityRepository.findByUser(userEntity);
+    return replies.stream().map(Reply::from).toList();
+  }
 }
 
 

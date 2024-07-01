@@ -3,15 +3,22 @@ package com.example.testboard.service;
 import com.example.testboard.exception.follow.FollowAlreadyExistsException;
 import com.example.testboard.exception.follow.FollowNotFoundException;
 import com.example.testboard.exception.follow.InvalidFollowException;
+import com.example.testboard.exception.post.PostNotFoundException;
 import com.example.testboard.exception.user.UserAlreadyExistsException;
 import com.example.testboard.exception.user.UserNotAllowedException;
 import com.example.testboard.exception.user.UserNotFoundException;
 import com.example.testboard.model.entity.FollowEntity;
+import com.example.testboard.model.entity.LikeEntity;
+import com.example.testboard.model.entity.PostEntity;
 import com.example.testboard.model.entity.UserEntity;
+import com.example.testboard.model.user.Follower;
+import com.example.testboard.model.user.LikedUser;
 import com.example.testboard.model.user.User;
 import com.example.testboard.model.user.UserAuthenticationResponse;
 import com.example.testboard.model.user.UserPatchRequestBody;
 import com.example.testboard.repository.FollowEntityRepository;
+import com.example.testboard.repository.LikeEntityRepository;
+import com.example.testboard.repository.PostEntityRepository;
 import com.example.testboard.repository.UserEntityRepository;
 import java.util.List;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,18 +33,25 @@ public class UserService implements UserDetailsService {
 
   private UserEntityRepository userEntityRepository;
   private BCryptPasswordEncoder bCryptPasswordEncoder;
-  private JwtService jwtService;
   private FollowEntityRepository followEntityRepository;
+  private PostEntityRepository postEntityRepository;
+  private LikeEntityRepository likeEntityRepository;
+  private JwtService jwtService;
 
   public UserService(
       UserEntityRepository userEntityRepository,
       BCryptPasswordEncoder bCryptPasswordEncoder,
-      JwtService jwtService,
-      FollowEntityRepository followEntityRepository) {
+      FollowEntityRepository followEntityRepository,
+      PostEntityRepository postEntityRepository,
+      LikeEntityRepository likeEntityRepository,
+      JwtService jwtService
+  ) {
     this.userEntityRepository = userEntityRepository;
     this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    this.jwtService = jwtService;
     this.followEntityRepository = followEntityRepository;
+    this.postEntityRepository = postEntityRepository;
+    this.likeEntityRepository = likeEntityRepository;
+    this.jwtService = jwtService;
   }
 
   @Override
@@ -175,7 +189,7 @@ public class UserService implements UserDetailsService {
     return User.from(following, false);
   }
 
-  public List<User> getFollowers(String username, UserEntity currentUser) {
+  public List<Follower> getFollowers(String username, UserEntity currentUser) {
     // username 을 구독한 사람들의 리스트.
     // SELECT * from follow WHERE following = username
     UserEntity following = userEntityRepository
@@ -185,7 +199,9 @@ public class UserService implements UserDetailsService {
     List<FollowEntity> followers = followEntityRepository.findByFollowing(following);
 
     return followers.stream()
-        .map(followEntity -> getUserWithFollowingStatus(followEntity.getFollower(), currentUser))
+        .map(followEntity -> Follower.from(
+            getUserWithFollowingStatus(followEntity.getFollower(), currentUser),
+            followEntity.getCreatedDateTime()))
         .toList();
   }
 
@@ -200,6 +216,44 @@ public class UserService implements UserDetailsService {
 
     return followings.stream()
         .map(followEntity -> getUserWithFollowingStatus(followEntity.getFollowing(), currentUser))
+        .toList();
+  }
+
+  public List<LikedUser> getLikedUsersByPostId(Long postId, UserEntity currentUser) {
+    PostEntity postEntity = postEntityRepository.findById(postId)
+        .orElseThrow(() -> new PostNotFoundException(postId));
+
+    List<LikeEntity> likeEntities = likeEntityRepository.findByPost(postEntity);
+
+    return likeEntities.stream()
+        .map(
+            likeEntity -> getLikedUserWithFollowingStatus(likeEntity, postEntity, currentUser))
+        .toList();
+  }
+
+  private LikedUser getLikedUserWithFollowingStatus(LikeEntity likeEntity, PostEntity postEntity,
+      UserEntity currentUser) {
+    return LikedUser.from(
+        getUserWithFollowingStatus(likeEntity.getUser(), currentUser),
+        postEntity.getPostId(),
+        likeEntity.getCreatedDateTime());
+  }
+
+  public List<LikedUser> getLikedUsersByUser(String username, UserEntity currentUser) {
+
+    UserEntity userEntity = userEntityRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
+
+    List<PostEntity> postEntities = postEntityRepository.findByUser(userEntity);
+
+    return postEntities.stream()
+        .flatMap(
+            postEntity -> likeEntityRepository.findByPost(postEntity).stream()
+                .map(
+                    likeEntity -> getLikedUserWithFollowingStatus(likeEntity, postEntity,
+                        currentUser)
+                ))
         .toList();
   }
 }
