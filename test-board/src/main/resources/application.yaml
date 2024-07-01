@@ -21,3 +21,5 @@ spring:
 logging:
   level:
     root: INFO
+jwt:
+  secret-key: aGVsbG8gZXZlcnlvbmUgcHJhaXNlIHRoZSBHb2Q=
