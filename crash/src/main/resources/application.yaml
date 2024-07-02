@@ -3,3 +3,6 @@ spring:
     user:
       name: crash-admin
       password: crash-admin-password
+
+jwt:
+  secret-key: UHJhaXNlIHRoZSBmYXRoZXIgcHJhaXNlIHRoZSBzb24gcHJhaXNlIHRoZSBzcGlyaXQgdGhyZWUgaW4gb25l
