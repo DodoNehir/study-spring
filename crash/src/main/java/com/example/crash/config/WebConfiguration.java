@@ -3,6 +3,7 @@ package com.example.crash.config;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -51,7 +52,16 @@ public class WebConfiguration {
         .cors(Customizer.withDefaults())
 
         // 모든 request 허용
-        .authorizeHttpRequests((request) -> request.anyRequest().permitAll())
+//        .authorizeHttpRequests((request) -> request.anyRequest().permitAll())
+
+        // 회원가입, 로그인 request(POST)로 올 경우에만 무조건 허용하고
+        // 그 외 api들은 인증정보를 확인할거야.
+        .authorizeHttpRequests((requests) ->
+            requests
+                .requestMatchers(HttpMethod.POST, "/api/*/users", "/api/*/users/authenticate")
+                .permitAll()
+                .anyRequest()
+                .authenticated())
 
         // 세션은 사용하지 않으니 꺼둠
         .sessionManagement(

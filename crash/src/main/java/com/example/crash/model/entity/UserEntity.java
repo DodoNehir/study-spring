@@ -25,9 +25,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(
     name = "\"user\"",
-indexes = {
+    indexes = {
         @Index(name = "user_username_idx", columnList = "username", unique = true)
-})
+    })
 @Getter
 @Setter
 @EqualsAndHashCode
