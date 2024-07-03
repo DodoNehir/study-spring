@@ -13,12 +13,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
-public class jwtService {
+public class JwtService {
 
-  private static final Logger logger = LoggerFactory.getLogger(jwtService.class);
+  private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
   private final SecretKey key;
 
-  public jwtService(@Value("${jwt.secret-key}") String secretKeyString) {
+  public JwtService(@Value("${jwt.secret-key}") String secretKeyString) {
     key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKeyString));
   }
 
