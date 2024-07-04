@@ -30,8 +30,7 @@ public class SessionSpeakerService {
   }
 
 
-  // service 에서 사용
-  private SessionSpeakerEntity getSessionSpeakerEntityBySpeakerId(Long speakerId) {
+  public SessionSpeakerEntity getSessionSpeakerEntityBySpeakerId(Long speakerId) {
     return sessionSpeakerRepository.findById(speakerId)
         .orElseThrow(() -> new SpeakerNotFoundException(speakerId));
   }
@@ -49,13 +48,13 @@ public class SessionSpeakerService {
     SessionSpeakerEntity speakerEntity = getSessionSpeakerEntityBySpeakerId(speakerId);
 
     // 각 항목이 null 일 수도 있으므로 확인해서 수정해줌
-    if (!ObjectUtils.isEmpty(speakerEntity.getCompany())) {
+    if (!ObjectUtils.isEmpty(requestBody.company())) {
       speakerEntity.setCompany(requestBody.company());
     }
-    if (!ObjectUtils.isEmpty(speakerEntity.getName())) {
+    if (!ObjectUtils.isEmpty(requestBody.name())) {
       speakerEntity.setName(requestBody.name());
     }
-    if (!ObjectUtils.isEmpty(speakerEntity.getDescription())) {
+    if (!ObjectUtils.isEmpty(requestBody.description())) {
       speakerEntity.setDescription(requestBody.description());
     }
 
