@@ -1,5 +1,6 @@
 package com.example.crash.config;
 
+import com.example.crash.model.user.Role;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +61,14 @@ public class WebConfiguration {
             requests
                 .requestMatchers(HttpMethod.POST, "/api/*/users", "/api/*/users/authenticate")
                 .permitAll()
+
+                // session speaker CUD 에는 ADMIN 권한이 필요해
+                .requestMatchers(HttpMethod.GET, "/api/*/session-speakers",
+                    "/api/*/session-speakers/**")
+                .permitAll()
+                .requestMatchers("/api/*/session-speakers", "/api/*/session-speakers/**")
+                .hasAuthority(Role.ADMIN.name())
+
                 .anyRequest()
                 .authenticated())
 
@@ -71,7 +80,7 @@ public class WebConfiguration {
         .csrf(CsrfConfigurer::disable)
 
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(jwtExceptionFilter ,jwtAuthenticationFilter.getClass())
+        .addFilterBefore(jwtExceptionFilter, jwtAuthenticationFilter.getClass())
 
         // spring security에서 기본적으로 제공하는 Basic 도 끄기
         .httpBasic(HttpBasicConfigurer::disable);

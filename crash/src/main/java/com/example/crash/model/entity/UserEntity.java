@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
@@ -61,7 +62,18 @@ public class UserEntity implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of();
+    if (role == Role.ADMIN) {
+      return List.of(
+          new SimpleGrantedAuthority("ROLE_ADMIN"),
+          new SimpleGrantedAuthority(Role.ADMIN.name()),
+          new SimpleGrantedAuthority("ROLE_USER"),
+          new SimpleGrantedAuthority(Role.USER.name()));
+
+    } else {
+      return List.of(
+          new SimpleGrantedAuthority("ROLE_USER"),
+          new SimpleGrantedAuthority(Role.USER.name()));
+    }
   }
 
   public static UserEntity of(String username, String password, String name, String email) {
