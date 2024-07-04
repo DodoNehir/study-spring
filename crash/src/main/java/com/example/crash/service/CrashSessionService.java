@@ -35,8 +35,7 @@ public class CrashSessionService {
   }
 
 
-  // service 에서 사용
-  private CrashSessionEntity getCrashSessionEntityBySessionId(Long sessionId) {
+  public CrashSessionEntity getCrashSessionEntityBySessionId(Long sessionId) {
     return crashSessionRepository.findById(sessionId)
         .orElseThrow(() -> new SessionNotFoundException(sessionId));
   }
