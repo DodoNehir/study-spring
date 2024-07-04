@@ -2,6 +2,7 @@ package com.example.crash.service;
 
 import com.example.crash.exception.registration.RegistrationAlreadyExistsException;
 import com.example.crash.exception.registration.RegistrationNotFoundException;
+import com.example.crash.model.crashsession.CrashSessionRegistartionStatus;
 import com.example.crash.model.entity.CrashSessionEntity;
 import com.example.crash.model.entity.RegistrationEntity;
 import com.example.crash.model.entity.UserEntity;
@@ -9,6 +10,7 @@ import com.example.crash.model.registration.Registration;
 import com.example.crash.model.registration.RegistrationCreateRequestBody;
 import com.example.crash.repository.RegistrationRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,7 +60,7 @@ public class RegistrationService {
   }
 
 
-  private RegistrationEntity getRegistrationEntityByRegistrationIdAndUserEntity(
+  public RegistrationEntity getRegistrationEntityByRegistrationIdAndUserEntity(
       Long registrationId, UserEntity currentUser) {
     return registrationRepository
         .findByRegistrationIdAndUserEntity(registrationId, currentUser)
@@ -69,5 +71,20 @@ public class RegistrationService {
     RegistrationEntity registrationEntity = getRegistrationEntityByRegistrationIdAndUserEntity(
         registrationId, currentUser);
     registrationRepository.delete(registrationEntity);
+  }
+
+  public CrashSessionRegistartionStatus getRegistrationStatusBySessionIdAndUserId(
+      Long crashSessionId, UserEntity currentUser) {
+
+    CrashSessionEntity sessionEntity = crashSessionService.getCrashSessionEntityBySessionId(
+        crashSessionId);
+
+    Optional<RegistrationEntity> registrationEntity = registrationRepository
+        .findByCrashSessionEntityAndUserEntity(sessionEntity, currentUser);
+
+    return new CrashSessionRegistartionStatus(
+        crashSessionId,
+        registrationEntity.isPresent(),
+        registrationEntity.map(RegistrationEntity::getRegistrationId).orElse(null));
   }
 }

@@ -55,18 +55,25 @@ public class WebConfiguration {
         // 모든 request 허용
 //        .authorizeHttpRequests((request) -> request.anyRequest().permitAll())
 
-        // 회원가입, 로그인 request(POST)로 올 경우에만 무조건 허용하고
-        // 그 외 api들은 인증정보를 확인할거야.
         .authorizeHttpRequests((requests) ->
             requests
+                // 회원가입, 로그인 request(POST)로 올 경우에만 무조건 허용하고
                 .requestMatchers(HttpMethod.POST, "/api/*/users", "/api/*/users/authenticate")
                 .permitAll()
 
-                // session speaker CUD 에는 ADMIN 권한이 필요해
-                .requestMatchers(HttpMethod.GET, "/api/*/session-speakers",
-                    "/api/*/session-speakers/**")
+                // GET 은 모두에게 허용
+                .requestMatchers(HttpMethod.GET,
+                    "/api/*/session-speakers",
+                    "/api/*/session-speakers/**",
+                    "/api/*/crash-sessions",
+                    "/api/*/crash-sessions/**")
                 .permitAll()
-                .requestMatchers("/api/*/session-speakers", "/api/*/session-speakers/**")
+
+                // session 과 speaker CUD 에는 ADMIN 권한이 필요해
+                .requestMatchers("/api/*/session-speakers",
+                    "/api/*/session-speakers/**",
+                    "/api/*/crash-sessions",
+                    "/api/*/crash-sessions/**")
                 .hasAuthority(Role.ADMIN.name())
 
                 .anyRequest()

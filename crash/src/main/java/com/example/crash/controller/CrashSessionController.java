@@ -2,11 +2,15 @@ package com.example.crash.controller;
 
 import com.example.crash.model.crashsession.CrashSession;
 import com.example.crash.model.crashsession.CrashSessionCreateRequestBody;
+import com.example.crash.model.crashsession.CrashSessionRegistartionStatus;
 import com.example.crash.model.crashsession.CrashSessionUpdateRequestBody;
+import com.example.crash.model.entity.UserEntity;
 import com.example.crash.service.CrashSessionService;
+import com.example.crash.service.RegistrationService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,9 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrashSessionController {
 
   private final CrashSessionService crashSessionService;
+  private final RegistrationService registrationService;
 
-  public CrashSessionController(CrashSessionService crashSessionService) {
+  public CrashSessionController(CrashSessionService crashSessionService,
+      RegistrationService registrationService) {
     this.crashSessionService = crashSessionService;
+    this.registrationService = registrationService;
   }
 
 
@@ -34,10 +41,23 @@ public class CrashSessionController {
   }
 
   @GetMapping("/{crashSessionId}")
-  public ResponseEntity<CrashSession> getCrashSessionBySpeakerId(
+  public ResponseEntity<CrashSession> getCrashSessionBySessionId(
       @PathVariable Long crashSessionId
   ) {
     return ResponseEntity.ok(crashSessionService.getCrashSessionBySessionId(crashSessionId));
+  }
+
+  @GetMapping("/{crashSessionId}/registration-status")
+  public ResponseEntity<CrashSessionRegistartionStatus> getCrashSessionRegistrationStatusBySessionId(
+      @PathVariable Long crashSessionId,
+      Authentication authentication
+  ) {
+
+    CrashSessionRegistartionStatus status = registrationService.getRegistrationStatusBySessionIdAndUserId(
+        crashSessionId,
+        (UserEntity) authentication.getPrincipal());
+
+    return ResponseEntity.ok(status);
   }
 
 
