@@ -1,5 +1,6 @@
 package com.example.crash.config;
 
+import com.example.crash.model.coinbase.PriceResponse;
 import com.example.crash.model.crashsession.CrashSessionCategory;
 import com.example.crash.model.crashsession.CrashSessionCreateRequestBody;
 import com.example.crash.model.speaker.SessionSpeaker;
@@ -8,17 +9,25 @@ import com.example.crash.model.user.UserSignupRequestBody;
 import com.example.crash.service.CrashSessionService;
 import com.example.crash.service.SessionSpeakerService;
 import com.example.crash.service.UserService;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 import net.datafaker.Faker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.client.RestClient;
 
 @Configuration
 public class ApplicationConfiguration {
+
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationConfiguration.class);
+  private static final RestClient restClient = RestClient.create();
 
   private static final Faker faker = new Faker();
 
@@ -39,10 +48,29 @@ public class ApplicationConfiguration {
   public ApplicationRunner applicationRunner() {
     return args -> {
 
-      createTestUsers();
-      createTestSessionSpeakers(10);
+//      createTestUsers();
+//      createTestSessionSpeakers(10);
+
+      // TODO: Bitcoin 가격 조회
+//      getBitcoinUsdPrice();
 
     };
+  }
+
+  private Double getBitcoinUsdPrice() {
+    PriceResponse response = restClient
+        .get()
+        .uri("https://api.coinbase.com/v2/prices/BTC-USD/buy")
+        .retrieve()
+        .onStatus(HttpStatusCode::is4xxClientError,
+            (request, response1) -> {
+              logger.error(new String(response1.getBody().readAllBytes(), StandardCharsets.UTF_8));
+            })
+        .body(PriceResponse.class);
+
+    logger.info(response.toString());
+
+    return Double.parseDouble(response.data().amount());
   }
 
 
