@@ -14,3 +14,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/crash-db
     username: crash-master
     password: crash-postgres-password
+
+#jwt:
+#  secret-key:
+
+redis:
+  host: localhost
+  port: 6379

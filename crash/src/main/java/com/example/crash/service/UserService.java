@@ -7,6 +7,7 @@ import com.example.crash.model.user.User;
 import com.example.crash.model.user.UserAuthenticationResponse;
 import com.example.crash.model.user.UserLoginRequestBody;
 import com.example.crash.model.user.UserSignupRequestBody;
+import com.example.crash.repository.UserEntityCacheRepository;
 import com.example.crash.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,12 +21,14 @@ public class UserService implements UserDetailsService {
   private final UserRepository userRepository;
   private final BCryptPasswordEncoder passwordEncoder;
   private final JwtService jwtService;
+  private final UserEntityCacheRepository userEntityCacheRepository;
 
   public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder,
-      JwtService jwtService) {
+      JwtService jwtService, UserEntityCacheRepository userEntityCacheRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.jwtService = jwtService;
+    this.userEntityCacheRepository = userEntityCacheRepository;
   }
 
   @Override
@@ -79,8 +82,16 @@ public class UserService implements UserDetailsService {
   }
 
   private UserEntity getUserEntityByUsername(String username) {
-    return userRepository
-        .findByUsername(username)
-        .orElseThrow(() -> new UserNotFoundException(username));
+    return userEntityCacheRepository.getUserEntityCache(username)
+        .orElseGet(
+            () -> {
+              var userEntity = userRepository.findByUsername(username)
+                  .orElseThrow(() -> new UserNotFoundException(username));
+              userEntityCacheRepository.setUserEntityCache(userEntity);
+              return userEntity;
+            }
+        );
+
   }
+
 }

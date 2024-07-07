@@ -1,6 +1,7 @@
 package com.example.crash.model.entity;
 
 import com.example.crash.model.user.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -61,6 +62,7 @@ public class UserEntity implements UserDetails {
 
 
   @Override
+  @JsonIgnore
   public Collection<? extends GrantedAuthority> getAuthorities() {
     if (role == Role.ADMIN) {
       return List.of(
@@ -75,6 +77,32 @@ public class UserEntity implements UserDetails {
           new SimpleGrantedAuthority(Role.USER.name()));
     }
   }
+
+  @Override
+  @JsonIgnore
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  @JsonIgnore
+  public boolean isEnabled() {
+    return true;
+  }
+
+
 
   public static UserEntity of(String username, String password, String name, String email) {
     UserEntity user = new UserEntity();
