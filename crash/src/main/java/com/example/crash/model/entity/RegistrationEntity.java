@@ -20,7 +20,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @Entity
 @Table(
-    name = "registraiont",
+    name = "registration",
     indexes = @Index(name = "registration_userid_sessionid_idx", columnList = "userid, sessionid", unique = true))
 public class RegistrationEntity {
 
@@ -41,10 +41,10 @@ public class RegistrationEntity {
 
   public static RegistrationEntity of(UserEntity userEntity,
       CrashSessionEntity crashSessionEntity) {
-    RegistrationEntity registraionEntity = new RegistrationEntity();
-    registraionEntity.setUserEntity(userEntity);
-    registraionEntity.setCrashSessionEntity(crashSessionEntity);
-    return registraionEntity;
+    RegistrationEntity registrationEntity = new RegistrationEntity();
+    registrationEntity.setUserEntity(userEntity);
+    registrationEntity.setCrashSessionEntity(crashSessionEntity);
+    return registrationEntity;
   }
 
   @PrePersist

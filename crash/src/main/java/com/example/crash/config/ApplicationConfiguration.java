@@ -48,8 +48,8 @@ public class ApplicationConfiguration {
   public ApplicationRunner applicationRunner() {
     return args -> {
 
-//      createTestUsers();
-//      createTestSessionSpeakers(10);
+      createTestUsers();
+      createTestSessionSpeakers(10);
 
       // TODO: Bitcoin 가격 조회
 //      getBitcoinUsdPrice();

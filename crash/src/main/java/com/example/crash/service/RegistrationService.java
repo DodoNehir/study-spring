@@ -18,11 +18,14 @@ public class RegistrationService {
 
   private final RegistrationRepository registrationRepository;
   private final CrashSessionService crashSessionService;
+  private final SlackService slackService;
 
   public RegistrationService(RegistrationRepository registrationRepository,
-      CrashSessionService crashSessionService) {
+      CrashSessionService crashSessionService,
+      SlackService slackService) {
     this.registrationRepository = registrationRepository;
     this.crashSessionService = crashSessionService;
+    this.slackService = slackService;
   }
 
 
@@ -53,10 +56,11 @@ public class RegistrationService {
                   currentUser.getName(), sessionEntity.getTitle());
             });
 
-    return Registration.from(
-        registrationRepository.save(
-            RegistrationEntity.of(currentUser, sessionEntity)
-        ));
+    Registration registration = Registration.from(
+        registrationRepository.save(RegistrationEntity.of(currentUser, sessionEntity)));
+    slackService.sendSlackNotification(registration);
+
+    return registration;
   }
 
 

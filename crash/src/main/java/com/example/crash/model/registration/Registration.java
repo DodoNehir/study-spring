@@ -6,12 +6,14 @@ import com.example.crash.model.user.User;
 import jakarta.validation.constraints.NotEmpty;
 
 public record Registration(
+    @NotEmpty Long registrationId,
     @NotEmpty User user,
     @NotEmpty CrashSession crashSession) {
 
   public static Registration from(RegistrationEntity registrationEntity) {
     return new Registration(
-        User.from(registrationEntity.getUserEntity()),
+        registrationEntity.getRegistrationId(),
+        com.example.crash.model.user.User.from(registrationEntity.getUserEntity()),
         CrashSession.from(registrationEntity.getCrashSessionEntity()));
   }
 
