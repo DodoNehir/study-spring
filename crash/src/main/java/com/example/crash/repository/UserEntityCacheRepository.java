@@ -1,6 +1,7 @@
 package com.example.crash.repository;
 
 import com.example.crash.model.entity.UserEntity;
+import java.time.Duration;
 import java.util.Optional;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,7 @@ public class UserEntityCacheRepository {
 
   public void setUserEntityCache(UserEntity userEntity) {
     var redisKey = getRedisKey(userEntity.getUsername());
-    userEntityRedisTemplate.opsForValue().set(redisKey, userEntity);
+    userEntityRedisTemplate.opsForValue().set(redisKey, userEntity, Duration.ofSeconds(30));
   }
 
   public Optional<UserEntity> getUserEntityCache(String username) {

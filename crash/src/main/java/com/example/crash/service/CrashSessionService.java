@@ -1,14 +1,13 @@
 package com.example.crash.service;
 
 import com.example.crash.exception.crashsession.SessionNotFoundException;
-import com.example.crash.exception.sessionspeaker.SpeakerNotFoundException;
 import com.example.crash.model.crashsession.CrashSession;
 import com.example.crash.model.crashsession.CrashSessionCreateRequestBody;
 import com.example.crash.model.crashsession.CrashSessionUpdateRequestBody;
 import com.example.crash.model.entity.CrashSessionEntity;
 import com.example.crash.model.entity.SessionSpeakerEntity;
+import com.example.crash.repository.CrashSessionCacheRepository;
 import com.example.crash.repository.CrashSessionRepository;
-import com.example.crash.repository.SessionSpeakerRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -18,20 +17,40 @@ public class CrashSessionService {
 
   private final CrashSessionRepository crashSessionRepository;
   private final SessionSpeakerService sessionSpeakerService;
+  private final CrashSessionCacheRepository crashSessionCacheRepository;
 
   public CrashSessionService(CrashSessionRepository crashSessionRepository,
-      SessionSpeakerService sessionSpeakerService) {
+      SessionSpeakerService sessionSpeakerService,
+      CrashSessionCacheRepository crashSessionCacheRepository) {
     this.crashSessionRepository = crashSessionRepository;
     this.sessionSpeakerService = sessionSpeakerService;
+    this.crashSessionCacheRepository = crashSessionCacheRepository;
   }
 
 
   public List<CrashSession> getCrashSessions() {
-    return crashSessionRepository.findAll().stream().map(CrashSession::from).toList();
+    List<CrashSession> sessionsListCache = crashSessionCacheRepository.getCrashSessionsListCache();
+
+    if (!ObjectUtils.isEmpty(sessionsListCache)) {
+      return sessionsListCache;
+    } else {
+      List<CrashSession> crashSessionList = crashSessionRepository.findAll().stream()
+          .map(CrashSession::from)
+          .toList();
+      crashSessionCacheRepository.setCrashSessionsListCache(crashSessionList);
+      return crashSessionList;
+    }
   }
 
   public CrashSession getCrashSessionBySessionId(Long sessionId) {
-    return CrashSession.from(getCrashSessionEntityBySessionId(sessionId));
+    return crashSessionCacheRepository.getCrashSessionCache(sessionId).orElseGet(
+        () -> {
+          CrashSession crashSession = CrashSession.from(
+              getCrashSessionEntityBySessionId(sessionId));
+          crashSessionCacheRepository.setCrashSessionCache(crashSession);
+          return crashSession;
+        }
+    );
   }
 
 
