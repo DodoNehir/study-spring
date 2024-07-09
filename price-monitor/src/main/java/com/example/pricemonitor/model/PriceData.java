@@ -1,6 +1,6 @@
 package com.example.pricemonitor.model;
 
-public record Data(
+public record PriceData(
     String amount,
     String base,
     String currency
