@@ -1,3 +1,7 @@
 spring.application.name: currency-monitor
 server:
   port: 9999
+
+kexim:
+  api-uri: https://www.koreaexim.go.kr/site/program/financial/exchangeJSON?data=AP01&authkey=
+  auth-key: qokk4mw8p8pUBeL9f6Vo3n2hY4tjNcAV

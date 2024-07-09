@@ -1,7 +1,8 @@
-package service;
+package com.example.currencymonitor.service;
 
+
+import com.example.currencymonitor.model.exchange.ExchangeResponse;
 import java.util.Arrays;
-import model.exchange.ExchangeResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,18 +25,18 @@ public class ExchangeService {
   }
 
   public ExchangeResponse getExchangeByCurrency(String currency) {
-    ExchangeResponse[] exchangeDatas = restClient
+    var exchangeDatas = restClient
         .get()
-        .uri(apiUri + authKey + "&searchdate=20240709&data=AP01")
+        .uri(apiUri + authKey)
         .retrieve()
         .body(ExchangeResponse[].class);
 
-    if (exchangeDatas == null || exchangeDatas.length == 0) {
+    if (exchangeDatas == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     return Arrays.stream(exchangeDatas)
-        .filter(exchangeData -> exchangeData.cur_unit().equals(currency))
+        .filter(exchangeData -> exchangeData.cur_unit().equals(currency.toUpperCase()))
         .findFirst()
         .orElse(new ExchangeResponse("USD", "미국 달러", "2000"));
 

@@ -1,4 +1,4 @@
-package model.exchange;
+package com.example.currencymonitor.model.exchange;
 
 public record ExchangeResponse(
     String cur_unit, // 통화코드 (USD)

@@ -1,6 +1,7 @@
-package model.currency;
+package com.example.currencymonitor.model.currency;
 
-import model.exchange.ExchangeResponse;
+
+import com.example.currencymonitor.model.exchange.ExchangeResponse;
 
 public record CurrencyResponse(
     String unit,

@@ -1,14 +1,17 @@
-package controller;
+package com.example.currencymonitor.controller;
 
-import model.currency.CurrencyResponse;
-import model.exchange.ExchangeResponse;
+
+import com.example.currencymonitor.model.currency.CurrencyResponse;
+import com.example.currencymonitor.model.exchange.ExchangeResponse;
+import com.example.currencymonitor.service.ExchangeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.ExchangeService;
 
-@RestController("/api/v1/currencies")
+@RestController
+@RequestMapping("/api/v1/currencies")
 public class ExchangeController {
 
   private final ExchangeService exchangeService;
