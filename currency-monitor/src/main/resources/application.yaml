@@ -1,0 +1,3 @@
+spring.application.name: currency-monitor
+server:
+  port: 9999
