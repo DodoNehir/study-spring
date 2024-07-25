@@ -13,4 +13,7 @@ spring:
     url: jdbc:mysql://localhost:3306/project-voucher
     username: root
     password: root1234
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: TRACE
 

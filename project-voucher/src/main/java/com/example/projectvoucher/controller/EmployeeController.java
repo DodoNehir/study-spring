@@ -1,9 +1,8 @@
 package com.example.projectvoucher.controller;
 
+import com.example.projectvoucher.entity.EmployeeEntity;
 import com.example.projectvoucher.request.EmployeeCreateRequest;
-import com.example.projectvoucher.response.EmployeeResponse;
-import java.util.HashMap;
-import java.util.Map;
+import com.example.projectvoucher.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,21 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EmployeeController {
 
-  // DB 는 쿼리 날릴 때 where 조건이 필요한데 여기서는 사번이라고 생각해보자
-  private final Map<Long, EmployeeCreateRequest> employeeResponseMap = new HashMap<>();
+  private final EmployeeService employeeService;
 
-  // 회원 생성
-  @PostMapping
-  public Long createEmployee(@RequestBody EmployeeCreateRequest request) {
-    Long no = employeeResponseMap.size() + 1L;
-    employeeResponseMap.put(no, request);
-    return no;
+  public EmployeeController(EmployeeService employeeService) {
+    this.employeeService = employeeService;
   }
 
-  // 회원 조회
+  // 사원 생성
+  @PostMapping
+  public ResponseEntity<Long> createEmployee(@RequestBody EmployeeCreateRequest request) {
+    return ResponseEntity.ok(employeeService.createEmployee(request));
+  }
+
+  // 사원 조회
   @GetMapping("/{no}")
-  public ResponseEntity<EmployeeCreateRequest> getAllEmployees(@PathVariable Long no) {
-    EmployeeCreateRequest employeeCreateRequest = employeeResponseMap.get(no);
-    return ResponseEntity.ok(employeeCreateRequest);
+  public ResponseEntity<EmployeeEntity> getAllEmployees(@PathVariable Long no) {
+    return ResponseEntity.ok(employeeService.findEmployeeById(no));
   }
 }

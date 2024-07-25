@@ -1,5 +1,6 @@
 package com.example.projectvoucher.entity;
 
+import com.example.projectvoucher.request.EmployeeCreateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,6 +37,14 @@ public class EmployeeEntity {
     this.name = name;
     this.position = position;
     this.department = department;
+  }
+
+  public static EmployeeEntity from(EmployeeCreateRequest employeeCreateRequest) {
+    EmployeeEntity employeeEntity = new EmployeeEntity();
+    employeeEntity.setName(employeeCreateRequest.name());
+    employeeEntity.setPosition(employeeCreateRequest.position());
+    employeeEntity.setDepartment(employeeCreateRequest.department());
+    return employeeEntity;
   }
 
 }
