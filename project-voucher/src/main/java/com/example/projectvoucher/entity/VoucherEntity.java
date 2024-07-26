@@ -2,8 +2,10 @@ package com.example.projectvoucher.entity;
 
 import com.example.projectvoucher.common.VoucherStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,5 +34,20 @@ public class VoucherEntity extends BaseEntity {
     this.validFrom = validFrom;
     this.validTo = validTo;
     this.usedUser = usedUser;
+  }
+
+  public static VoucherEntity of(Long amount) {
+    VoucherEntity voucherEntity = new VoucherEntity();
+    voucherEntity.setAmount(amount);
+    return voucherEntity;
+  }
+
+  @PrePersist
+  public void prePersist() {
+    this.voucherCode = UUID.randomUUID().toString().toUpperCase().replaceAll("-", "");
+    this.status = VoucherStatus.PUBLISHED;
+    this.validFrom = LocalDate.now();
+    this.validTo = validFrom.plusDays(1830);
+    this.usedUser = " ";
   }
 }
