@@ -3,6 +3,7 @@ package com.example.projectvoucher.service;
 import com.example.projectvoucher.entity.EmployeeEntity;
 import com.example.projectvoucher.repository.EmployeeRepository;
 import com.example.projectvoucher.request.EmployeeCreateRequest;
+import com.example.projectvoucher.response.EmployeeResponse;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,11 @@ public class EmployeeService {
   }
 
   // 사원 조회
-  public EmployeeEntity findEmployeeById(Long employeeId) {
+  public EmployeeResponse findEmployeeById(Long employeeId) {
     Optional<EmployeeEntity> employeeEntity = employeeRepository.findById(employeeId);
     if (employeeEntity.isPresent()) {
       EmployeeEntity employee = employeeEntity.get();
-      return employee;
+      return EmployeeResponse.from(employee);
     }
     throw new RuntimeException("Employee not found");
   }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.projectvoucher.entity.EmployeeEntity;
 import com.example.projectvoucher.request.EmployeeCreateRequest;
+import com.example.projectvoucher.response.EmployeeResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +27,13 @@ class EmployeeServiceTest {
     // when
     EmployeeCreateRequest employeeCreateRequest = new EmployeeCreateRequest(name, position, department);
     Long no = employeeService.createEmployee(employeeCreateRequest);
-    EmployeeEntity employeeEntity = employeeService.findEmployeeById(no);
+    EmployeeResponse employeeResponse = employeeService.findEmployeeById(no);
 
     // then
-    assertThat(employeeEntity).isNotNull();
-    assertThat(employeeEntity.getName()).isEqualTo(name);
-    assertThat(employeeEntity.getPosition()).isEqualTo(position);
-    assertThat(employeeEntity.getDepartment()).isEqualTo(department);
+    assertThat(employeeResponse).isNotNull();
+    assertThat(employeeResponse.name()).isEqualTo(name);
+    assertThat(employeeResponse.position()).isEqualTo(position);
+    assertThat(employeeResponse.department()).isEqualTo(department);
   }
 
 }

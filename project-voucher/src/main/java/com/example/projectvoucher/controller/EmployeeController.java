@@ -2,6 +2,7 @@ package com.example.projectvoucher.controller;
 
 import com.example.projectvoucher.entity.EmployeeEntity;
 import com.example.projectvoucher.request.EmployeeCreateRequest;
+import com.example.projectvoucher.response.EmployeeResponse;
 import com.example.projectvoucher.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class EmployeeController {
 
   // 사원 조회
   @GetMapping("/{no}")
-  public ResponseEntity<EmployeeEntity> getAllEmployees(@PathVariable Long no) {
+  public ResponseEntity<EmployeeResponse> getAllEmployees(@PathVariable Long no) {
     return ResponseEntity.ok(employeeService.findEmployeeById(no));
   }
 }

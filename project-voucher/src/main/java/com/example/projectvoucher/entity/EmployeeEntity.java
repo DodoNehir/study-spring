@@ -14,11 +14,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "employee")
 @Entity
-public class EmployeeEntity {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class EmployeeEntity extends BaseEntity {
 
   @Column(nullable = false)
   private String name;
