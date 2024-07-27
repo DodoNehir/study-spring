@@ -1,11 +1,21 @@
 ###
-POST http://localhost:8080/api/v1/employees
+POST http://localhost:8080/api/v2/vouchers
 Content-Type: application/json
 
 {
-  "name": "Alice",
-  "position": "사장",
-  "department": "HQ"
+  "requester": "PARTNER",
+  "requestId": "ABC01234",
+  "voucherAmount": "KRW_50000"
+}
+
+###
+POST http://localhost:8080/api/v2/vouchers/uses
+Content-Type: application/json
+
+{
+  "requester": "PARTNER",
+  "requestId": "ABC01234",
+  "voucherCode": "300CDC22EF6D460CA94877F34FA076D8"
 }
 
 ###
