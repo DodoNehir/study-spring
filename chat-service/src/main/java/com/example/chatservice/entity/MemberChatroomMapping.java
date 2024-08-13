@@ -5,29 +5,31 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.time.LocalDateTime;
-import java.util.Set;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 @Entity
-public class Chatroom {
+public class MemberChatroomMapping {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "chatroom_id")
+  @Column(name = "member_chatroom_mapping_id")
   @Id
   Long id;
 
-  String title;
+  @JoinColumn(name = "member_id")
+  @ManyToOne
+  Member member;
 
-  @OneToMany(mappedBy = "chatroom")
-  Set<MemberChatroomMapping> memberChatroomMappingSet;
-
-  LocalDateTime createdAt;
+  @JoinColumn(name = "chatroom_id")
+  @ManyToOne
+  Chatroom chatroom;
 
 }
