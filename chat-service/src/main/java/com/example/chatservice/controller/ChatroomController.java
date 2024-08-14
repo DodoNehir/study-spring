@@ -1,5 +1,6 @@
 package com.example.chatservice.controller;
 
+import com.example.chatservice.dto.ChatroomDto;
 import com.example.chatservice.entity.Chatroom;
 import com.example.chatservice.service.ChatService;
 import com.example.chatservice.vos.CustomOAuth2User;
@@ -26,24 +27,30 @@ public class ChatroomController {
   }
 
   @PostMapping
-  public Chatroom createChatroom(@AuthenticationPrincipal CustomOAuth2User user,
+  public ChatroomDto createChatroom(@AuthenticationPrincipal CustomOAuth2User user,
       @RequestParam String title) {
-    return chatService.createChatroom(user.getMember(), title);
+    Chatroom chatroom = chatService.createChatroom(user.getMember(), title);
+    return ChatroomDto.from(chatroom);
   }
 
   @PostMapping("/{chatroomId}")
-  public Boolean joinChatroom(@AuthenticationPrincipal CustomOAuth2User user ,@PathVariable Long chatroomId) {
+  public Boolean joinChatroom(@AuthenticationPrincipal CustomOAuth2User user,
+      @PathVariable Long chatroomId) {
     return chatService.joinChatroom(user.getMember(), chatroomId);
   }
 
   @DeleteMapping("/{chatroomId}")
-  public Boolean leaveChatroom(@AuthenticationPrincipal CustomOAuth2User user,@PathVariable Long chatroomId) {
+  public Boolean leaveChatroom(@AuthenticationPrincipal CustomOAuth2User user,
+      @PathVariable Long chatroomId) {
     return chatService.leaveChatroom(user.getMember(), chatroomId);
   }
 
   @GetMapping
-  public List<Chatroom> getChatrooms(@AuthenticationPrincipal CustomOAuth2User user) {
-    return chatService.getAllChatrooms(user.getMember());
+  public List<ChatroomDto> getChatrooms(@AuthenticationPrincipal CustomOAuth2User user) {
+    List<Chatroom> allChatrooms = chatService.getAllChatrooms(user.getMember());
+    return allChatrooms.stream()
+        .map(ChatroomDto::from)
+        .toList();
   }
 
 }
