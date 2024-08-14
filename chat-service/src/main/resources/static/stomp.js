@@ -4,6 +4,7 @@ const stompClient = new StompJs.Client({
 
 stompClient.onConnect = (frame) => {
   setConnected(true);
+  showChatrooms();
   console.log('Connected: ' + frame);
 
 };
@@ -20,7 +21,7 @@ stompClient.onStompError = (frame) => {
 function setConnected(connected) {
   $("#connect").prop("disabled", connected);
   $("#disconnect").prop("disabled", !connected);
-  $("#create").prop("disabled", connected);
+  $("#create").prop("disabled", !connected);
 }
 
 function connect() {
@@ -42,7 +43,7 @@ function createChatroom() {
     success: function (data) {
       console.log('data ', data);
       showChatrooms();
-      enterChatrooms(data.id, true);
+      enterChatroom(data.id, true);
     },
     error: function (request, status, error) {
       console.log('request: ' + request);
@@ -85,8 +86,9 @@ function renderChatrooms(chatrooms) {
 let subscription;
 
 // newMember가 처음 입장이면 입장 안내 메세지 출력
-function enterChatrooms(chatroomId, newMember) {
+function enterChatroom(chatroomId, newMember) {
   $("#chatroom-id").val(chatroomId);
+  $("#messages").html("");
   $("#conversation").show();
   $("#send").prop("disabled", false);
   $("#leave").prop("disabled", false);
@@ -116,7 +118,7 @@ function joinChatroom(chatroomId) {
     url: '/chats/' + chatroomId,
     success: function (data) {
       console.log("data: " + data);
-      enterChatrooms(chatroomId, data);
+      enterChatroom(chatroomId, data);
     },
     error: function (request, status, error) {
       console.log('request: ' + request);
@@ -127,7 +129,7 @@ function joinChatroom(chatroomId) {
 
 // 아예 나오는 것
 function leaveChatroom() {
-  let chatroomId = $("chatroom-id").val();
+  let chatroomId = $("#chatroom-id").val();
   $.ajax({
     type: "DELETE",
     datatype: "json",

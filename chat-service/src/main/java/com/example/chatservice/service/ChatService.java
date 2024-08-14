@@ -5,6 +5,7 @@ import com.example.chatservice.entity.Member;
 import com.example.chatservice.entity.MemberChatroomMapping;
 import com.example.chatservice.repository.ChatroomRepository;
 import com.example.chatservice.repository.MemberChatroomMappingRepository;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +67,7 @@ public class ChatService {
   }
 
   // 채팅방 나가기
+  @Transactional
   public Boolean leaveChatroom(Member member, Long chatroomId) {
     // 참여 여부 확인
     if (!memberChatroomMappingRepository.findByMemberIdAndChatroomId(member.getId(), chatroomId)
